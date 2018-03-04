@@ -5,7 +5,7 @@
         path: "{{ prometheus_volume_source}}"
         owner: nobody
         group: nobody
-        mode: 0755 
+        mode: 0777 
         state: directory 
   notify: 
     - Restart prometheus container
