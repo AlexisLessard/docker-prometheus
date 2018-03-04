@@ -1,0 +1,51 @@
+---
+- name: ensure prometheus data directory owner is nobody
+  become: yes
+  file:
+        path: "{{ prometheus_volume_source}}"
+        owner: nobody
+        group: nobody
+        mode: 0755 
+        state: directory 
+  notify: 
+    - Restart prometheus container
+    - Restart grafana container
+
+- name: Copy config file
+  become: yes
+  template:
+        src: prometheus.yml.j2
+        dest: "{{ prometheus_volume_source}}/prometheus.yml"
+        owner: root
+        mode: 0666 
+  notify: 
+    - Restart prometheus container
+    - Restart grafana container
+- name: Copy rule file
+  become: yes
+  copy:
+    src: "{{ prometheus_rule_file_name }}"
+    dest: "{{ prometheus_volume_source }}/{{ prometheus_rule_file_name }}"
+    owner: root
+    mode: 0666
+  notify: 
+    - Restart prometheus container
+    - Restart grafana container
+
+- name: Start prometheus container
+  docker_container:
+    name: "{{ prometheus_container_name }}"
+    hostname: "{{ prometheus_container_name }}"
+    image: "{{ prometheus_image }}"
+    command: "{% for key in prometheus_commandline_args %}--{{key}}={{prometheus_commandline_args[key]}} {% endfor %}"
+    published_ports:
+      - 9090:9090
+    volumes:
+      - "{{ prometheus_volume_mountinstruction }}" 
+    links:
+      - "{{ prometheus_node_exporter_container_name }}" 
+      - "{{ alert_manager_container_name }}"
+    restart_policy: always
+
+
+    

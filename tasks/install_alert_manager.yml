@@ -1,0 +1,30 @@
+---
+- name: ensure alert_manager directory owner is nobody
+  become: yes
+  file:
+    path: "{{ alert_manager_volume_source}}"
+    owner: nobody
+    group: nobody
+    mode: 0755 
+    state: directory 
+
+- name: Copy alert_manager config file
+  become: yes
+  template: 
+    src: alert_manager.yml.j2
+    dest: "{{ alert_manager_volume_source}}/{{ alert_manager_config_file_name }}"
+    owner: root
+    mode: 0644
+
+- name: Start alert_manager container
+  become: yes
+  docker_container:
+    name: "{{ alert_manager_container_name }}"
+    hostname: "{{ alert_manager_container_name }}"
+    image: "{{ alert_manager_container_image }}"
+    volumes:
+      - "/srv/alert_manager/alert_manager.yml:/etc/alertmanager/config.yml"
+    published_ports:
+      - 9093:9093
+    restart_policy: always
+  notify: Restart prometheus container

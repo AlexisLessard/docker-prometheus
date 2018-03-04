@@ -1,0 +1,49 @@
+---
+# vars file for prometheus-docker
+prometheus_image: prom/prometheus
+prometheus_volume_source: /srv/prometheus-data
+prometheus_volume_target: /prometheus-data
+prometheus_volume_mountinstruction: "{{prometheus_volume_source}}:{{ prometheus_volume_target }}"
+prometheus_container_name: prometheus
+prometheus_rule_file_name: rule_file.yml
+prometheus_rule_file_location: "{{ prometheus_volume_target }}/{{ prometheus_rule_file_name }}"
+prometheus_commandline_args:
+  config.file: "{{ prometheus_volume_target }}/prometheus.yml"
+  storage.tsdb.path: "{{ prometheus_volume_target}}/data"
+
+prometheus_node_exporter_image: prom/node-exporter
+prometheus_node_exporter_container_name: node_exporter 
+
+grafana_container_name: grafana
+grafana_image: grafana/grafana
+grafana_volume_folder: /srv/grafana
+grafana_volume_storage_source: "{{grafana_volume_folder}}/storage"
+grafana_volume_storage_target: /var/lib/grafana
+grafana_volume_storage_mountinstruction: "{{ grafana_volume_storage_source }}:{{ grafana_volume_storage_target }}"
+grafana_volume_datasource_source: /srv/grafana/datasources.yml
+grafana_volume_datasource_target: /etc/grafana/provisioning/datasources/datasources.yml 
+grafana_volume_datasource_mountinstruction: "{{ grafana_volume_datasource_source}}:{{grafana_volume_datasource_target}}"
+grafana_volume_mountinstructions:
+        - "{{grafana_volume_storage_mountinstruction}}"
+        - "{{grafana_volume_datasource_mountinstruction}}"
+
+#YOU SHOULD OVERWRTE THIS BEFORE YOUR FIRST RUN
+#Running the role a second time won't ovewrite the credentials.
+#You'll have to do it manually in the web interface of grafana
+grafana_admin_user: admin
+grafana_admin_password: admin
+grafana_environment_variables:
+  GF_SECURITY_ADMIN_USER: "{{ grafana_admin_user }}"
+  GF_SECURITY_ADMIN_PASSWORD: "{{ grafana_admin_password }}"
+
+alert_manager_container_image: prom/alertmanager
+alert_manager_container_name: alert_manager
+alert_manager_smtp_server: smtp.gmail.com:587 
+alert_manager_destination_email: root@localhost 
+#OVERWRITE WITH YOUR GMAIL CREDENTIALS
+alert_manager_source_email: root@localhost
+alert_manager_source_password: default
+alert_manager_config_file_name: alert_manager.yml
+alert_manager_volume_source: /srv/alert_manager
+alert_manager_volume_target: /etc/alertmanager/config.yml 
+alert_manager_volume_mountinstructions: "{{ alert_manager_volume_source }}/{{alert_manager_config_file_name}}:{{alert_manager_volume_target }}"

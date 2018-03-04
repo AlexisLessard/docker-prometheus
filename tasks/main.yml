@@ -1,0 +1,16 @@
+---
+# tasks file for prometheus-docke
+
+- include_tasks: install_local_node_exporter.yml
+  tags:
+    - "prometheus-exporter"
+- include_tasks: install_alert_manager.yml
+  tags:
+    - "alert_manager"
+- include_tasks: install_prometheus.yml
+  tags: 
+    - "prometheus"
+- include_tasks: install_grafana.yml
+  tags:
+    - "grafana"
+

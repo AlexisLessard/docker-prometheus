@@ -1,0 +1,17 @@
+---
+# vars file for prometheus-docker
+
+
+#YOU SHOULD OVERWRTE THIS BEFORE YOUR FIRST RUN
+#Running the role a second time won't ovewrite the credentials.
+#You'll have to do it manually in the web interface of grafana
+grafana_admin_user: admin
+grafana_admin_password: admin
+
+
+#OVERWRITE WITH YOUR GMAIL CREDENTIALS
+#(if you are using the gmail smtp server,of course!)
+#(which is the one I set by default)
+#BEWARE THAT THESE WILL BE IN CLEAR TEXT
+alert_manager_source_email: root@localhost
+alert_manager_source_password: default

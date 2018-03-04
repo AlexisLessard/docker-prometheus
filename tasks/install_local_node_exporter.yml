@@ -1,0 +1,8 @@
+- name: Start node_exporter container
+  docker_container:
+    name: "{{ prometheus_node_exporter_container_name }}"
+    hostname: "{{ prometheus_node_exporter_container_name }}"
+    image: "{{ prometheus_node_exporter_image }}"
+    published_ports:
+      - 9100:9100
+    restart_policy: always

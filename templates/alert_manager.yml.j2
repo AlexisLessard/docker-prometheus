@@ -1,0 +1,13 @@
+---
+route:
+  receiver: email
+
+receivers:
+  - name: email
+    email_configs:
+        - to: {{ alert_manager_destination_email }}
+          from: {{ alert_manager_source_email }}
+          smarthost: {{  alert_manager_smtp_server }}
+          auth_username: {{ alert_manager_source_email }}
+          auth_password: {{ alert_manager_source_password }} 
+          require_tls: true

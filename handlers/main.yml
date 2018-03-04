@@ -1,0 +1,32 @@
+---
+# handlers file for prometheus-docker
+
+- name: Restart prometheus container
+  docker_container:
+      name: "{{ prometheus_container_name }}"
+      image: "{{ prometheus_image }}"
+      command: "{% for key in prometheus_commandline_args %}--{{key}}={{prometheus_commandline_args[key]}} {% endfor %}"
+      restart: yes 
+      published_ports:
+        - 9090:9090
+      volumes:
+        - "{{ prometheus_volume_mountinstruction }}"
+      links:
+        - "{{ prometheus_node_exporter_container_name }}" 
+        - "{{ alert_manager_container_name }}"
+      restart_policy: always
+
+- name: Restart grafana container
+  become: yes
+  docker_container:
+    name: "{{ grafana_container_name }}"
+    hostname: "{{ grafana_container_name }}"
+    image: "{{ grafana_image }}" 
+    restart: yes
+    published_ports:
+      - 3000:3000 
+    volumes: "{{ grafana_volume_mountinstructions }}"
+    links:
+      - "{{ prometheus_container_name }}"
+    env: "{{ grafana_environment_variables }}" 
+    restart_policy: always

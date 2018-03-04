@@ -1,0 +1,41 @@
+---
+- name: Ensure grafana's directory exists
+  become: yes
+  file:
+        path: /srv/grafana/ 
+        owner: nobody
+        group: nobody
+        mode: 0755
+        state: directory 
+  notify: "Restart grafana container"
+- name: Ensure grafana's storage directory existe
+  become: yes
+  file:
+        path: "{{ grafana_volume_storage_source }}" 
+        state: directory 
+
+- name: Copy datasource file to grafana
+  become: yes
+  template:
+    src: datasources.yml.j2
+    dest: "{{ grafana_volume_datasource_source }}"  
+    owner: root
+    mode: 0644
+  notify: "Restart grafana container"
+
+- name: Start Grafana container
+  become: yes
+  docker_container:
+    name: "{{ grafana_container_name }}"
+    hostname: "{{ grafana_container_name }}"
+    image: "{{ grafana_image }}" 
+    published_ports:
+      - 3000:3000 
+    volumes: "{{ grafana_volume_mountinstructions }}"
+    links:
+      - "{{ prometheus_container_name }}"
+    env: "{{ grafana_environment_variables }}" 
+    restart_policy: always
+
+
+
