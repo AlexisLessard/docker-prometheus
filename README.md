@@ -1,38 +1,53 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+This role creates a docker stack with 4 containers:
+* prom/node-exporter
+* prom/alertmanager
+* prom/prometheus
+* grafana/grafana
+
+It will configure a prometheus server to pull metrics from the node exporter. Grafana is then configured to pull those metrics from prometheus trough a file configured datasource. The alert manager is also configured to push alert notifications to an email address of your choosing.
 
 Requirements
 ------------
+**This role does not install docker on the remote host**. You should get another role for that (I do have one, but so far, it sucks, and I shall not make it public. Feel free to recommend an ansible-galaxy dependecy that you trust).
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
 
 Role Variables
 --------------
+Read trough the default variable file and report any variable name that is unclear to you. 
+You **NEED** to ovewrite the variables int vars/main.yml in order for the notifications to work, and for your grafana to be somewhat secure.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+* alert_manager_source_email: gmail account which will be use to send notifications
+* alert_manager_source_password: gmail password of the alert_manager_source_email
+* grafana_admin_user: the default user of grafana
+* grafana_admin_password: the default passowrd of the grafana_admin_user
+
+Two notes:
+* the alert_manager_source_email and passowrd should be from gmail if you won't use a personnal smtp server. By default, the role will use gmail's smtp public server.
+* While the grafana_admin_user and password variables will change their values on the first run, they won't overwrite if you run the role again, as they appear to be stored in the storage, and no longer red by grafana after the first run. You should change them trough the web interface.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
 
 Example Playbook
 ----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+Pretty straigh forward.
+``` yaml
+---
+- hosts: localhost
+  roles:
+    - prometheus-docker
+```
 
 License
 -------
 
-BSD
+MIT License
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+I'm a newly graduate student from Québec. This is my first public role, so feel free to point mishaps and errors.
