@@ -1,4 +1,4 @@
-Role Name
+docker-prometheus
 =========
 
 This role creates a docker stack with 4 containers:
