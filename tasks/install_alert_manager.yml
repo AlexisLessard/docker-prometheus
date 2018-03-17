@@ -27,4 +27,6 @@
     published_ports:
       - 9093:9093
     restart_policy: always
-  notify: Restart prometheus container
+  notify: 
+    - Restart prometheus container
+    - Restart grafana container
