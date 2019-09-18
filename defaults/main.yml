@@ -5,6 +5,7 @@ prometheus_volume_source: /srv/prometheus-data
 prometheus_volume_target: /prometheus-data
 prometheus_volume_mountinstruction: "{{prometheus_volume_source}}:{{ prometheus_volume_target }}"
 prometheus_container_name: prometheus
+prometheus_config_template: prometheus.yml.j2
 prometheus_rule_file_name: rule_file.yml
 prometheus_rule_file_location: "{{ prometheus_volume_target }}/{{ prometheus_rule_file_name }}"
 prometheus_commandline_args:
