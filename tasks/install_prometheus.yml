@@ -14,7 +14,7 @@
 - name: Copy config file
   become: yes
   template:
-        src: prometheus.yml.j2
+        src: "{{ prometheus_config_template }}"
         dest: "{{ prometheus_volume_source}}/prometheus.yml"
         owner: root
         mode: 0666 
